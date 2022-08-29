@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH -A b1139
+#SBATCH -p b1139
+#SBATCH -t 03:00:00
+#SBATCH --job-name="base_1pop_apv"
+#SBATCH --mem-per-cpu=4G
+#SBATCH --array=1-50
+#SBATCH --error=log/arrayJob_%A_%a.err
+#SBATCH --output=log/arrayJob_%A_%a.out
+
+offset=430000
+nloops=10
+((ini=(${SLURM_ARRAY_TASK_ID}-1)*$nloops+1+$offset))
+((fin=$ini+$nloops-1))
+
+for (( i=$ini; i<=$fin; i++))
+  do
+    ./model1g_apv $i ../../intermediate/act_pt_hosp_1pop-43.csv 0.17 4
+    ./model1g_apv $((i+1000)) ../../intermediate/act_pt_0.05_1pop-43_28_14.csv 0.17 4
+    ./model1g_apv $((i+2000)) ../../intermediate/act_pt_0.1_1pop-43_21_14.csv 0.17 4
+    ./model1g_apv $((i+3000)) ../../intermediate/act_pt_0.2_1pop-43_21_14.csv 0.17 4
+    ./model1g_apv $((i+4000)) ../../intermediate/act_pt_0.5_1pop-43_21_14.csv 0.17 4
+    ./model1g_apv $((i+5000)) ../../intermediate/act_pt_1.0_1pop-43_21_14.csv 0.17 4
+    ./model1g_apv $((i+6000)) ../../intermediate/act_pt_CLI_1pop-43_21_14.csv 0.17 4
+  done

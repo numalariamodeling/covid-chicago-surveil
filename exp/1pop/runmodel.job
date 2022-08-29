@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH -A b1139
+#SBATCH -p b1139
+#SBATCH -t 03:00:00
+#SBATCH --job-name="base_1pop"
+#SBATCH --mem-per-cpu=4G
+#SBATCH --array=1-10
+#SBATCH --error=log/arrayJob_%A_%a.err
+#SBATCH --output=log/arrayJob_%A_%a.out
+
+offset=269000
+nloops=50
+((ini=(${SLURM_ARRAY_TASK_ID}-1)*$nloops+1+$offset))
+((fin=$ini+$nloops-1))
+
+for (( i=$ini; i<=$fin; i++))
+  do
+    ./model1g_wdet $i 0.155 2
+  done
